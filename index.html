@@ -21,13 +21,13 @@
   input[type="text"] { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; font-family: 'Montserrat', sans-serif; }
   input::placeholder { font-family: 'Montserrat', sans-serif; font-size: 16px; color: #555; }
   .suggestions { width: 100%; background: #fff; border: 1px solid #ccc; border-top: none; max-height: 220px; overflow-y: auto; display: none; margin-top: -1px; }
-  .suggestions div { padding: 10px 12px; cursor: pointer; font-family: 'Montserrat', sans-serif; }
+  .suggestions div { padding: 10px 12px; cursor: pointer; }
   .suggestions div:hover { background: #f2f2f2; }
-  .error { color: #c62828; font-size: 14px; margin-top: 6px; display: none; font-family: 'Montserrat', sans-serif; }
+  .error { color: #c62828; font-size: 14px; margin-top: 6px; display: none; }
   .footer { padding: 16px 24px 24px; text-align: center; }
   button { background: #d84315; color: #fff; border: none; padding: 12px 28px; font-weight: 600; border-radius: 4px; cursor: pointer; font-family: 'Montserrat', sans-serif; font-size: 16px; }
   button:disabled { opacity: 0.6; cursor: not-allowed; }
-  .success { padding: 16px 24px; color: #2e7d32; font-weight: 600; display: none; font-family: 'Montserrat', sans-serif; }
+  .success { padding: 16px 24px; color: #2e7d32; font-weight: 600; display: none; text-align: center; }
 </style>
 </head>
 
@@ -65,22 +65,17 @@ const box = document.getElementById('suggestions');
 const btn = document.getElementById('submitBtn');
 const error = document.getElementById('nameError');
 
-// Fetch names from the web app
 fetch(`${SCRIPT_URL}?action=getNames`)
   .then(r => r.json())
   .then(data => names = data)
   .catch(console.error);
 
-// Show suggestions when input is focused
 input.addEventListener('focus', () => renderList(names));
-
-// Filter suggestions as the user types
 input.addEventListener('input', () => {
   const value = input.value.toLowerCase();
   renderList(names.filter(n => n.toLowerCase().includes(value)));
 });
 
-// Render suggestions list
 function renderList(list) {
   box.innerHTML = '';
   if (!list.length) { box.style.display = 'none'; return; }
@@ -93,12 +88,10 @@ function renderList(list) {
   box.style.display = 'block';
 }
 
-// Hide suggestions when clicking outside
 document.addEventListener('click', e => {
   if (!e.target.closest('.input-wrap')) box.style.display = 'none';
 });
 
-// Submit form to Google Apps Script
 function submitForm() {
   const name = input.value.trim();
   error.style.display = 'none';
