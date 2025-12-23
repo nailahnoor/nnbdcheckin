@@ -23,7 +23,7 @@
   .suggestions { width: 100%; background: #fff; border: 1px solid #ccc; border-top: none; max-height: 220px; overflow-y: auto; display: none; margin-top: -1px; }
   .suggestions div { padding: 10px 12px; cursor: pointer; }
   .suggestions div:hover { background: #f2f2f2; }
-  .error { color: #c62828; font-size: 14px; margin-top: 6px; display: none; }
+  .error { color: #c62828; font-size: 14px; margin-top: 6px; display: none; text-align: center; }
   .footer { padding: 16px 24px 24px; text-align: center; }
   button { background: #d84315; color: #fff; border: none; padding: 12px 28px; font-weight: 600; border-radius: 4px; cursor: pointer; font-family: 'Montserrat', sans-serif; font-size: 16px; }
   button:disabled { opacity: 0.6; cursor: not-allowed; }
@@ -64,11 +64,6 @@ const input = document.getElementById('nameInput');
 const box = document.getElementById('suggestions');
 const btn = document.getElementById('submitBtn');
 const error = document.getElementById('nameError');
-const successMsg = document.getElementById('successMsg');
-
-/* ---------- once per day logic ---------- */
-const todayKey = new Date().toISOString().slice(0, 10); // yyyy-mm-dd
-const storedDate = localStorage.getItem('lastCheckInDate');
 
 fetch(`${SCRIPT_URL}?action=getNames`)
   .then(r => r.json())
@@ -98,36 +93,22 @@ document.addEventListener('click', e => {
 });
 
 function submitForm() {
-  error.style.display = 'none';
-  successMsg.style.display = 'none';
-
-  /* block if already checked in today */
-  if (storedDate === todayKey) {
-    error.textContent = "you have already checked in today.";
-    error.style.display = 'block';
-    return;
-  }
-
   const name = input.value.trim();
+  error.style.display = 'none';
   btn.disabled = true;
 
   fetch(`${SCRIPT_URL}?action=submitCheckIn&name=${encodeURIComponent(name)}`)
     .then(r => r.json())
     .then(res => {
       btn.disabled = false;
-
-      if (res.status === 'error') {
-        error.textContent = "oops! that name does not exist.";
+      if(res.status === 'error') {
+        error.textContent = res.message; // will show either "oops! that name does not exist." or "you have already checked in today."
         error.style.display = 'block';
         return;
       }
-
-      /* save today’s check-in */
-      localStorage.setItem('lastCheckInDate', todayKey);
-
       input.value = '';
-      successMsg.style.display = 'block';
-      setTimeout(() => { successMsg.style.display = 'none'; }, 3000);
+      document.getElementById('successMsg').style.display = 'block';
+      setTimeout(() => { document.getElementById('successMsg').style.display = 'none'; }, 3000);
     })
     .catch(() => {
       btn.disabled = false;
