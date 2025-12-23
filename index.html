@@ -64,6 +64,11 @@ const input = document.getElementById('nameInput');
 const box = document.getElementById('suggestions');
 const btn = document.getElementById('submitBtn');
 const error = document.getElementById('nameError');
+const successMsg = document.getElementById('successMsg');
+
+/* ---------- once per day logic ---------- */
+const todayKey = new Date().toISOString().slice(0, 10); // yyyy-mm-dd
+const storedDate = localStorage.getItem('lastCheckInDate');
 
 fetch(`${SCRIPT_URL}?action=getNames`)
   .then(r => r.json())
@@ -93,22 +98,36 @@ document.addEventListener('click', e => {
 });
 
 function submitForm() {
-  const name = input.value.trim();
   error.style.display = 'none';
+  successMsg.style.display = 'none';
+
+  /* block if already checked in today */
+  if (storedDate === todayKey) {
+    error.textContent = "you have already checked in today.";
+    error.style.display = 'block';
+    return;
+  }
+
+  const name = input.value.trim();
   btn.disabled = true;
 
   fetch(`${SCRIPT_URL}?action=submitCheckIn&name=${encodeURIComponent(name)}`)
     .then(r => r.json())
     .then(res => {
       btn.disabled = false;
-      if(res.status === 'error') {
+
+      if (res.status === 'error') {
         error.textContent = "oops! that name does not exist.";
         error.style.display = 'block';
         return;
       }
+
+      /* save today’s check-in */
+      localStorage.setItem('lastCheckInDate', todayKey);
+
       input.value = '';
-      document.getElementById('successMsg').style.display = 'block';
-      setTimeout(() => { document.getElementById('successMsg').style.display = 'none'; }, 3000);
+      successMsg.style.display = 'block';
+      setTimeout(() => { successMsg.style.display = 'none'; }, 3000);
     })
     .catch(() => {
       btn.disabled = false;
