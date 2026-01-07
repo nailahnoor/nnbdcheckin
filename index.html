@@ -96,13 +96,15 @@ function submitForm() {
   const name = input.value.trim();
   error.style.display = 'none';
   btn.disabled = true;
+  btn.textContent = 'your check-in is submitting…⏳'; // <<< ADDED LINE
 
   fetch(`${SCRIPT_URL}?action=submitCheckIn&name=${encodeURIComponent(name)}`)
     .then(r => r.json())
     .then(res => {
       btn.disabled = false;
+      btn.textContent = 'i am here'; // reset lowercase
       if(res.status === 'error') {
-        error.textContent = res.message; // will show either "oops! that name does not exist." or "you have already checked in today."
+        error.textContent = res.message; // error from server
         error.style.display = 'block';
         return;
       }
@@ -112,6 +114,7 @@ function submitForm() {
     })
     .catch(() => {
       btn.disabled = false;
+      btn.textContent = 'i am here'; // reset lowercase
       error.textContent = "oops! that name does not exist.";
       error.style.display = 'block';
     });
