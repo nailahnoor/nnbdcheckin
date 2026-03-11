@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -11,23 +11,103 @@
 
 <style>
   * { box-sizing: border-box; text-transform: lowercase; }
-  body { font-family: 'Montserrat', sans-serif; background: #fce2b3; padding: 16px; }
-  .card { max-width: 520px; margin: auto; background: #fff; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,.2); overflow: hidden; }
+
+  body {
+    font-family: 'Montserrat', sans-serif;
+    background: #fce2b3;
+    margin: 0;
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    padding: 16px; /* keeps space on small mobile screens */
+  }
+
+  .card {
+    width: 100%;
+    max-width: 520px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    overflow: hidden;
+  }
+
   .header { border-top: 10px solid #f39c12; padding: 24px; }
+
   h2 { margin: 0 0 8px 0; font-weight: 700; text-transform: uppercase; }
+
   .subtext { margin: 0; font-size: 16px; }
+
   .section { padding: 24px; }
+
   .input-wrap { width: 100%; position: relative; }
-  input[type="text"] { width: 100%; padding: 12px; font-size: 16px; border: 1px solid #ccc; border-radius: 4px; font-family: 'Montserrat', sans-serif; }
-  input::placeholder { font-family: 'Montserrat', sans-serif; font-size: 16px; color: #555; }
-  .suggestions { width: 100%; background: #fff; border: 1px solid #ccc; border-top: none; max-height: 220px; overflow-y: auto; display: none; margin-top: -1px; }
-  .suggestions div { padding: 10px 12px; cursor: pointer; }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: 'Montserrat', sans-serif;
+  }
+
+  input::placeholder {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+    color: #555;
+  }
+
+  .suggestions {
+    width: 100%;
+    background: #fff;
+    border: 1px solid #ccc;
+    border-top: none;
+    max-height: 220px;
+    overflow-y: auto;
+    display: none;
+    margin-top: -1px;
+  }
+
+  .suggestions div {
+    padding: 10px 12px;
+    cursor: pointer;
+  }
+
   .suggestions div:hover { background: #f2f2f2; }
-  .error { color: #c62828; font-size: 14px; margin-top: 6px; display: none; text-align: center; }
+
+  .error {
+    color: #c62828;
+    font-size: 14px;
+    margin-top: 6px;
+    display: none;
+    text-align: center;
+  }
+
   .footer { padding: 16px 24px 24px; text-align: center; }
-  button { background: #d84315; color: #fff; border: none; padding: 12px 28px; font-weight: 600; border-radius: 4px; cursor: pointer; font-family: 'Montserrat', sans-serif; font-size: 16px; }
+
+  button {
+    background: #d84315;
+    color: #fff;
+    border: none;
+    padding: 12px 28px;
+    font-weight: 600;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 16px;
+  }
+
   button:disabled { opacity: 0.6; cursor: not-allowed; }
-  .success { padding: 16px 24px; color: #2e7d32; font-weight: 600; display: none; text-align: center; }
+
+  .success {
+    padding: 16px 24px;
+    color: #2e7d32;
+    font-weight: 600;
+    display: none;
+    text-align: center;
+  }
 </style>
 </head>
 
@@ -96,15 +176,15 @@ function submitForm() {
   const name = input.value.trim();
   error.style.display = 'none';
   btn.disabled = true;
-  btn.textContent = 'your check-in is submitting…⏳'; // <<< ADDED LINE
+  btn.textContent = 'your check-in is submitting…⏳';
 
   fetch(`${SCRIPT_URL}?action=submitCheckIn&name=${encodeURIComponent(name)}`)
     .then(r => r.json())
     .then(res => {
       btn.disabled = false;
-      btn.textContent = 'i am here'; // reset lowercase
+      btn.textContent = 'i am here';
       if(res.status === 'error') {
-        error.textContent = res.message; // error from server
+        error.textContent = res.message;
         error.style.display = 'block';
         return;
       }
@@ -114,7 +194,7 @@ function submitForm() {
     })
     .catch(() => {
       btn.disabled = false;
-      btn.textContent = 'i am here'; // reset lowercase
+      btn.textContent = 'i am here';
       error.textContent = "oops! that name does not exist.";
       error.style.display = 'block';
     });
